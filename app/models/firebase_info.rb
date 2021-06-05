@@ -1,0 +1,2 @@
+class FirebaseInfo < ApplicationRecord
+end

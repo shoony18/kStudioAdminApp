@@ -1,0 +1,226 @@
+<div class="wrapper ">
+    <div class="main-panel">
+
+<!--      <div class="content">-->
+        <div class="container-fluid" id="applyIndexArea">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-header card-header-secondary bg-secondary">
+                  <h5 class="card-title ">選択された申込情報</h5>
+                </div>
+                <div class="card-body" id="applyShowTbody">
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-header card-header-danger">
+                  <h5 class="card-title ">回答</h5>
+<!--                    <img src = "/assets/answerToApply.png">                    -->
+                </div>
+                  
+                <div class="card-body">
+                    <form id="applyShowAnswer">
+                        <button id = "analyticsButton" class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample" onclick="alert2(); return false;">
+                            自動解析する
+                        </button><br>
+                    </form>
+                </div>
+
+                <div class="card-body">
+                  <div class="btn btn-secondary disabled" style ="padding-bottom: 10px;">サマリースコア</div>
+                  <div class="table-responsive">
+                      総合得点：<%= @totalScore %>点
+                    <table class="table">
+                      <thead class=" text-secondary">
+                        <th>
+                          #
+                        </th>
+                        <th>
+                          評価軸
+                        </th>
+                        <th>
+                          点数
+                        </th>
+                      </thead>
+                      <tbody id="applyTbody">          
+                          <% (0..@anaCriteriaTitle.count-1).each do |i| %>
+                          <tr>
+                              <td><%= String(i+1) %></td>
+                              <td><textarea id = "anaCriteriaTitle<%= String(i) %>"><%= @anaCriteriaTitle[i] %></textarea></td>
+                              <td><textarea id = "criteriaScore<%= String(i) %>"><%= @criteriaScore[i] %></textarea></td>
+                          </tr>
+                          <% end %>
+                      </tbody>
+                    </table>
+
+                  </div>
+                    
+                  <div class="btn btn-secondary disabled" style ="padding-bottom: 10px;">詳細スコア</div>
+                  <div class="table-responsive">
+                    <table class="table">
+                      <thead class=" text-secondary">
+                        <th>
+                          #
+                        </th>
+                        <th>
+                          解析ポイント
+                        </th>
+                        <th>
+                          角度
+                        </th>
+                        <th>
+                          差異
+                        </th>
+                        <th>
+                          点数
+                        </th>
+                        <th>
+                          FBフラグ
+                        </th>
+                        <th>
+                          フィードバック
+                        </th>
+                      </thead>
+                      <tbody id="applyTbody">          
+                          <% (0..@anaPointID.count-1).each do |i| %>
+                          <tr id="applyTr<%= String(i) %>">
+                              <td><%= String(i+1) %></td>
+                              <td><textarea id = "anaPointID<%= String(i) %>"><%= @anaPointID[i] %></textarea></td>
+                              <td><textarea id = "angleValue<%= String(i) %>"><%= @angleValue[i] %></textarea></td>
+                              <td><textarea id = "angleValueDiff<%= String(i) %>"><%= @angleValueDiff[i] %></textarea></td>
+                              <td><textarea id = "detailScore<%= String(i) %>"><%= @detailScore[i] %></textarea></td>
+                              <td><textarea id = "fbFlag<%= String(i) %>"><%= @fbFlag[i] %></textarea></td>
+<!--                              <td><textarea id = "fbContent%= String(i) %>"></textarea></td>-->
+                          </tr>
+                          <% end %>
+                      </tbody>
+                    </table>
+
+                  </div>
+                    <form id="applyShowAnswer">
+                        <button id = "analyticsButton" class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample" onclick="alert3(); return false;">
+                            BigQueryから分析結果を取得する
+                        </button><br>
+                      </form>
+                </div>
+              </div>
+                
+                
+                <button id = "backToShow" class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                    戻る
+                </button>
+                <button id = "applyShowCreateAnswer" class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample" onclick="alert(); return false;">
+                    回答送信
+                </button>
+              <br>
+              <br>
+                                    
+              </div>
+          </div>
+        </div>
+      </div>
+      <footer class="footer">
+        <div class="container-fluid">
+          <nav class="float-left">
+            <ul>
+              <li>
+                <a href="https://www.creative-tim.com">
+                  Creative Tim
+                </a>
+              </li>
+              <li>
+                <a href="https://creative-tim.com/presentation">
+                  About Us
+                </a>
+              </li>
+              <li>
+                <a href="http://blog.creative-tim.com">
+                  Blog
+                </a>
+              </li>
+              <li>
+                <a href="https://www.creative-tim.com/license">
+                  Licenses
+                </a>
+              </li>
+            </ul>
+          </nav>
+          <div class="copyright float-right">
+            &copy;
+            <script>
+              document.write(new Date().getFullYear())
+            </script>, made with <i class="material-icons">favorite</i> by
+            <a href="https://www.creative-tim.com" target="_blank">Creative Tim</a> for a better web.
+          </div>
+        </div>
+      </footer>
+    </div>
+<!--  </div>-->
+  <div class="fixed-plugin">
+    <div class="dropdown show-dropdown">
+      <a href="#" data-toggle="dropdown">
+        <i class="fa fa-cog fa-2x"> </i>
+      </a>
+      <ul class="dropdown-menu">
+        <li class="header-title"> Sidebar Filters</li>
+        <li class="adjustments-line">
+          <a href="javascript:void(0)" class="switch-trigger active-color">
+            <div class="badge-colors ml-auto mr-auto">
+              <span class="badge filter badge-purple" data-color="purple"></span>
+              <span class="badge filter badge-azure" data-color="azure"></span>
+              <span class="badge filter badge-green" data-color="green"></span>
+              <span class="badge filter badge-warning" data-color="orange"></span>
+              <span class="badge filter badge-danger" data-color="danger"></span>
+              <span class="badge filter badge-rose active" data-color="rose"></span>
+            </div>
+            <div class="clearfix"></div>
+          </a>
+        </li>
+        <li class="header-title">Images</li>
+        <li class="active">
+          <a class="img-holder switch-trigger" href="javascript:void(0)">
+            <img src="/assets/sidebar-1.jpg" alt="">
+          </a>
+        </li>
+        <li>
+          <a class="img-holder switch-trigger" href="javascript:void(0)">
+            <img src="/assets/sidebar-2.jpg" alt="">
+          </a>
+        </li>
+        <li>
+          <a class="img-holder switch-trigger" href="javascript:void(0)">
+            <img src="/assets/sidebar-3.jpg" alt="">
+          </a>
+        </li>
+        <li>
+          <a class="img-holder switch-trigger" href="javascript:void(0)">
+            <img src="/assets/sidebar-4.jpg" alt="">
+          </a>
+        </li>
+        <li class="button-container">
+          <a href="https://www.creative-tim.com/product/material-dashboard" target="_blank" class="btn btn-danger btn-block">Free Download</a>
+        </li>
+        <!-- <li class="header-title">Want more components?</li>
+            <li class="button-container">
+                <a href="https://www.creative-tim.com/product/material-dashboard-pro" target="_blank" class="btn btn-warning btn-block">
+                  Get the pro version
+                </a>
+            </li> -->
+        <li class="button-container">
+          <a href="https://demos.creative-tim.com/material-dashboard/docs/2.1/getting-started/introduction.html" target="_blank" class="btn btn-default btn-block">
+            View Documentation
+          </a>
+        </li>
+        <li class="button-container github-star">
+          <a class="github-button" href="https://github.com/creativetimofficial/material-dashboard" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star ntkme/github-buttons on GitHub">Star</a>
+        </li>
+        <li class="header-title">Thank you for 95 shares!</li>
+        <li class="button-container text-center">
+          <button id="twitter" class="btn btn-round btn-twitter"><i class="fa fa-twitter"></i> &middot; 45</button>
+          <button id="facebook" class="btn btn-round btn-facebook"><i class="fa fa-facebook-f"></i> &middot; 50</button>
+          <br>
+          <br>
+        </li>
+      </ul>
+    </div>
+  </div>

@@ -1,0 +1,820 @@
+<html>
+  <head>
+    <title>K-Studio</title>
+
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+      <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
+      <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+
+      <link rel="stylesheet" media="all" href="/assets/material-dashboard.css" data-turbolinks-track="reload" />
+      <link rel="stylesheet" media="all" href="/assets/login.css" data-turbolinks-track="reload" />
+      
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <%= csrf_meta_tags %>
+      <%= csp_meta_tag %>
+      <%= stylesheet_pack_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+      <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+<!--      %= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>-->
+<!--      %= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>-->
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    
+      <script src="https://www.gstatic.com/firebasejs/8.2.4/firebase-app.js"></script>
+      <script src="https://www.gstatic.com/firebasejs/8.2.4/firebase-analytics.js"></script>
+      <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-auth.js"></script>  
+      <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-database.js"></script>
+      <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-storage.js"></script>
+      <script>
+          function(snapshot) {
+              $('#logo').on('click', function(){
+                  window.location.href　= "/" 
+              })
+          };
+      </script>
+
+      <script>
+          var firebaseConfig = {
+              apiKey: "AIzaSyBi-QlXbsBNFYkt0dE99-ZiTo91kVJ-ZKs",
+              authDomain: "kstudio-analytics.firebaseapp.com",
+              databaseURL: 'https://kstudio-analytics-default-rtdb.firebaseio.com/',
+              projectId: "kstudio-analytics",
+              storageBucket: "kstudio-analytics.appspot.com",
+              messagingSenderId: "500227056886",
+              appId: "1:500227056886:web:e11a7ee92cae630dc4b8d7",
+              measurementId: "G-FEQL5GZZ21"
+
+          };
+          firebase.initializeApp(firebaseConfig);
+          firebase.analytics();
+      </script>
+
+      <script>        
+
+          <% if @currentView == "applyIndex" %>
+
+          var date = new Date();
+          var y = date.getFullYear();
+          var m = ('00' + (date.getMonth()+1)).slice(-2);          
+          var yyyy_mm = String(y) + String(m);
+          
+          var id = 1;
+          var query = firebase.database().ref("apply").child("202105").orderByKey();
+     
+          query.once("value").then(function(snapshot) {
+            snapshot.forEach(function(childSnapshot) {
+                
+                const applyID = childSnapshot.val().applyID
+                const uid = childSnapshot.val().uid           
+                const userName = childSnapshot.val().userName                
+                const answerFlag = childSnapshot.val().answerFlag
+                var answerFlag_Text;
+                if (answerFlag == "0"){
+                    answerFlag_Text = "未回答";                                   
+                }else if (answerFlag == "1"){
+                    answerFlag_Text = "回答作成中";  
+                }else{
+                    answerFlag_Text = "回答済";                                                                        
+                }
+                const memo = childSnapshot.val().memo                
+                const date = childSnapshot.val().date  
+                const time = childSnapshot.val().time  
+                var applyTbodyElement = [id,"img",answerFlag_Text,date+" "+time,userName,memo,"detail","analytics"]
+
+                var applyTrID = "applyTr" + String(id);
+                var applyTrID_Button = "applyTr" + String(id) + "_Button";
+                var applyTrID_Analytics = "applyTr" + String(id) + "_Analytics";
+                
+                var textbox_element = document.getElementById('applyIndexLabel1');
+                var insertHTML = '<div>'+ yyyy_mm + "月度" +'</div>';
+                textbox_element.insertAdjacentHTML('afterbegin', insertHTML);
+                                
+                var textbox_element = document.getElementById('applyTbody');
+                var insertHTML = '<tr id = ' + applyTrID + '>';
+                textbox_element.insertAdjacentHTML('afterbegin', insertHTML);
+
+                id = id + 1;
+
+                var i = 0;
+                while (i < applyTbodyElement.length) {
+                    var textbox_element = document.getElementById(applyTrID);
+                    if (applyTbodyElement[i] == "img"){
+                        var new_element1 = document.createElement('td');
+                        new_element1.id = applyTrID+"_img";
+                        textbox_element.appendChild(new_element1);
+
+                        ref1 = firebase.storage().ref().child('user').child(uid).child('myApply').child("202105").child(applyID).child(applyID + '.png');
+                        ref1.getDownloadURL().then((url) => {
+                            var textbox_element2 = document.getElementById(applyTrID+"_img");
+                            var new_element2 = document.createElement('img');
+                            new_element2.src = url;
+                            new_element2.controls = true;
+                            new_element2.style = "width:200px; height:100px;";
+                            textbox_element2.appendChild(new_element2);     
+                        });
+                        
+                    }else if (applyTbodyElement[i] == "detail"){
+                        var insertHTML = '<td><button id = ' + applyTrID_Button + ' class="btn btn-secondary" type="button" >詳細</td>';
+                            
+                        textbox_element.insertAdjacentHTML('beforeend', insertHTML);
+                        $('#' + applyTrID_Button).on('click', function(){
+                            window.location.href　= "/apply/show?applyID=" + applyID 
+                        })
+                    }else if (applyTbodyElement[i] == "analytics"){
+                        var insertHTML = '<td><button id = ' + applyTrID_Analytics + ' class="btn btn-secondary" type="button">解析データ</td>';
+                        textbox_element.insertAdjacentHTML('beforeend', insertHTML);
+                        $('#' + applyTrID_Analytics).on('click', function(){
+                            window.location.href　= "/analytics/show?applyID=" + applyID 
+                        })
+                    }else{
+                        var new_element = document.createElement('td');
+                        new_element.textContent = applyTbodyElement[i];
+                        textbox_element.appendChild(new_element);                        
+                    }
+                    i = i + 1;
+                }
+                
+            });
+          });
+          
+                    
+          <% end %>
+      </script>
+
+      <script>        
+          <% if @currentView == "applyShow" %>    
+          
+          var date = new Date();
+          var y = date.getFullYear();
+          var m = ('00' + (date.getMonth()+1)).slice(-2);          
+          var yyyy_mm = String(y) + String(m);
+          
+          var applyID = '<%= @applyID %>';
+          var ref1 = firebase.database().ref("apply").child("202105").child(applyID)     
+          ref1.on('value', function(snapshot) {
+              const uid = snapshot.val().uid           
+              const userName = snapshot.val().userName                
+              const answerFlag = snapshot.val().answerFlag
+              var answerFlag_Text; 
+              if (answerFlag == "0"){
+                  answerFlag_Text = "未回答";                                   
+              }else if (answerFlag == "1"){
+                  answerFlag_Text = "回答作成中";  
+              }else{
+                  answerFlag_Text = "回答済";                                                                        
+              }
+              const memo = snapshot.val().memo                
+              const date = snapshot.val().date  
+              const time = snapshot.val().time  
+              const cloudVideoURL = snapshot.val().cloudVideoURL  
+                
+              var applyShowTbody = document.getElementById('applyShowTbody');
+              var insertHTML1 = '<div><img src = "/assets/applyUser.png" style ="padding-bottom: 5px;"><h6 style ="padding: 20px 0px 0 10px; display: inline-block;">' + userName + '</h6></div><video style ="witdh: 300px; height: 300px;" controls  src =' + cloudVideoURL +'></video><br><div><div class="btn btn-dark" style ="padding-bottom: 10px;">' + answerFlag_Text + '</div><h6 style ="margin: 20px 0px 0 10px; display: inline-block;">' + date + ' ' + time + '</h6></div><br><h6>' + memo + '</h6>';
+              applyShowTbody.insertAdjacentHTML('afterbegin', insertHTML1);
+              
+              $('#applyShowMakeAnswer').on('click', function(){
+                  window.location.href　= "/apply/edit?applyID=" + applyID 
+              })
+              $('#backToIndex').on('click', function(){
+                  window.location.href　= "/apply/index"
+              })
+
+          });
+          var ref2 = firebase.database().ref("answer").child(applyID)     
+          ref2.on('value', function(snapshot) {
+              const good = snapshot.val().good           
+              const bad = snapshot.val().bad                
+              const practice = snapshot.val().practice
+              const URL = snapshot.val().URL
+              const URLs = URL.split( '\n' );              
+              const comment = snapshot.val().comment
+              
+              var good_re = good.replace(/\n/g,"<br>");
+              var bad_re = bad.replace(/\n/g,"<br>");
+              var practice_re = practice.replace(/\n/g,"<br>");
+              var comment_re = comment.replace(/\n/g,"<br>");
+
+              var applyShowAnswer = document.getElementById('applyShowAnswer');
+
+              var insertHTML2_1 = '<div class="btn btn-secondary" style ="padding-bottom: 10px;">良いポイント</div><br><h6>' + good_re +'</h6>';
+              applyShowAnswer.insertAdjacentHTML('beforeend', insertHTML2_1);
+
+              var insertHTML2_2 = '<br><div class="btn btn-secondary" style ="padding-bottom: 10px;">改善ポイント</div><br><h6>' + bad_re +'</h6>';
+              applyShowAnswer.insertAdjacentHTML('beforeend', insertHTML2_2);
+
+              var insertHTML2_3 = '<br><div class="btn btn-secondary" style ="padding-bottom: 10px;">おすすめ練習</div><br><h6>' + practice_re +'</h6>';
+              applyShowAnswer.insertAdjacentHTML('beforeend', insertHTML2_3);
+              
+              var insertHTML2_4 = '<br><div class="btn btn-secondary" style ="padding-bottom: 10px;">参考URL</div>';
+              applyShowAnswer.insertAdjacentHTML('beforeend', insertHTML2_4);
+
+              URLs.forEach(function( url ) {
+                  var insertHTML2_4_re = '<div><a href = "'+url+'">' + url + '</div>';
+                  applyShowAnswer.insertAdjacentHTML('beforeend', insertHTML2_4_re);
+              });
+              
+              var insertHTML2_5 = '<br><div class="btn btn-secondary" style ="padding-bottom: 10px;">コメント</div><br><h6>' + comment_re +'</h6>';
+              applyShowAnswer.insertAdjacentHTML('beforeend', insertHTML2_5);              
+          });
+          <% end %>
+      </script>
+      
+      <script>
+          <% if @currentView == "applyEdit" || @currentView == "applyEdit_bq" %>
+          
+          var date = new Date();
+          var y = date.getFullYear();
+          var m = ('00' + (date.getMonth()+1)).slice(-2);          
+          var yyyy_mm = String(y) + String(m);
+
+          var applyID = '<%= @applyID %>';
+          var ref1 = firebase.database().ref("apply").child("202105").child(applyID)    
+          ref1.on('value', function(snapshot) {
+              const uid = snapshot.val().uid           
+              const userName = snapshot.val().userName                
+              const answerFlag = snapshot.val().answerFlag
+              var answerFlag_Text; 
+              if (answerFlag == "0"){
+                  answerFlag_Text = "未回答";                                   
+              }else if (answerFlag == "1"){
+                  answerFlag_Text = "回答作成中";  
+              }else{
+                  answerFlag_Text = "回答済";                                                                        
+              }
+              const memo = snapshot.val().memo                
+              const date = snapshot.val().date  
+              const time = snapshot.val().time  
+              const cloudVideoURL = snapshot.val().cloudVideoURL  
+                
+              var applyShowTbody = document.getElementById('applyShowTbody');
+              var insertHTML1 = '<div><img src = "/assets/applyUser.png" style ="padding-bottom: 5px;"><h6 style ="padding: 20px 0px 0 10px; display: inline-block;">' + userName + '</h6></div><video style ="witdh: 300px; height: 300px;" controls  src =' + cloudVideoURL +'></video><br><div><div class="btn btn-dark" style ="padding-bottom: 10px;">' + answerFlag_Text + '</div><h6 style ="margin: 20px 0px 0 10px; display: inline-block;">' + date + ' ' + time + '</h6></div><br><h6>' + memo + '</h6>';
+              applyShowTbody.insertAdjacentHTML('afterbegin', insertHTML1);
+              
+              
+              
+//              $('#applyShowCreateAnswer').on('click', function(){
+//                  const good = document.getElementById('applyShowAnswerTextArea1').value;
+//                  const bad = document.getElementById('applyShowAnswerTextArea2').value;
+//                  const practice = document.getElementById('applyShowAnswerTextArea3').value;
+//                  const URL = document.getElementById('applyShowAnswerTextArea4').value;
+//                  const comment = document.getElementById('applyShowAnswerTextArea5').value;
+//                  var ref1_1 = firebase.database().ref("answer").child(applyID)
+//                  var ref1_2 = firebase.database().ref("myApply").child(uid).child(applyID)
+//                  var ref1_3 = firebase.database().ref("myApply").child(uid).child(applyID).child("fcmTrigger")
+//                  var ref1_4 = firebase.database().ref("apply").child(applyID)
+//                  var data1_1 = { good: good, bad: bad, practice: practice, URL: URL, comment: comment };
+//                  var data1_2 = { answerFlag: "2" };
+//                  var data1_3 = { fcmTrigger: "1" };
+//                  ref1_1.update(data1_1);
+//                  ref1_2.update(data1_2);
+//                  ref1_3.update(data1_3);
+//                  ref1_4.update(data1_2);
+//                  window.location.href　= "/apply/show?applyID=" + applyID 
+//              })
+              $('#backToShow').on('click', function(){
+                  window.location.href　= "/" 
+              })
+              
+              var applyShowAnswer = document.getElementById('applyShowAnswer');
+              var insertHTML2_1 = '<div class="btn btn-secondary disabled" style ="padding-bottom: 10px;">良いポイント</div><br><div class="form-group"><textarea id = "applyShowAnswerTextArea1" class="form-control" rows="5"></textarea></div>';
+              var insertHTML2_2 = '<div class="btn btn-secondary disabled" style ="padding-bottom: 10px;">改善ポイント</div><br><div class="form-group"><textarea id = "applyShowAnswerTextArea2" class="form-control" rows="5"></textarea></div>';
+              var insertHTML2_3 = '<div class="btn btn-secondary disabled" style ="padding-bottom: 10px;">おすすめ練習</div><br><div class="form-group"><textarea id = "applyShowAnswerTextArea3" class="form-control" rows="5"></textarea></div>';
+              var insertHTML2_4 = '<div class="btn btn-secondary disabled" style ="padding-bottom: 10px;">参考URL</div><br><div class="form-group"><textarea id = "applyShowAnswerTextArea4" class="form-control" rows="5"></textarea></div>';
+              var insertHTML2_5 = '<div class="btn btn-secondary disabled" style ="padding-bottom: 10px;">コメント</div><br><div class="form-group"><textarea id = "applyShowAnswerTextArea5" class="form-control" rows="5"></textarea></div>';
+              applyShowAnswer.insertAdjacentHTML('beforeend', insertHTML2_1);
+              applyShowAnswer.insertAdjacentHTML('beforeend', insertHTML2_2);
+              applyShowAnswer.insertAdjacentHTML('beforeend', insertHTML2_3);
+              applyShowAnswer.insertAdjacentHTML('beforeend', insertHTML2_4);
+              applyShowAnswer.insertAdjacentHTML('beforeend', insertHTML2_5);
+              
+//              ここでfirebaseからFBデータを取ってくる
+              <% if @currentView == "applyEdit_bq" %>
+                  var anaPointIDArray = JSON.parse('<%= @anaPointID_j %>');
+                  var angleValueArray = JSON.parse('<%= @angleValue_j %>');
+                  var angleValueDiffArray = JSON.parse('<%= @angleValueDiff_j %>');
+                  var detailScoreArray = JSON.parse('<%= @detailScore_j %>');
+                  var fbFlagArray = JSON.parse('<%= @fbFlag_j %>');
+                  var anaCriteriaIDArray = JSON.parse('<%= @anaCriteriaID_j %>');
+                  var anaCriteriaTitleArray = JSON.parse('<%= @anaCriteriaTitle_j %>');
+                  var criteriaScoreArray = JSON.parse('<%= @criteriaScore_j %>');
+                  var fbFlagContentArray = [];
+
+
+              for (let i = 0; i < anaPointIDArray.length; i++) {
+                                                      
+                  var anaPointID = anaPointIDArray[i];
+                  var fbFlag = fbFlagArray[i];
+                                                                     
+                  var ref1 = firebase.database().ref("analytics").child("feedback").child(anaPointID)       
+                  ref1.on('value', function(snapshot) {
+                  
+                   if (fbFlag == "0") {
+                       var feedback = snapshot.val().fb0
+                   } else if (fbFlag == "1"){
+                       var feedback = snapshot.val().fb1
+                   } else if (fbFlag == "2"){
+                       var feedback = snapshot.val().fb2
+                   }else{
+                       var feedback = ""                       
+                   }
+
+                  fbFlagContentArray.push(feedback)
+                                            
+                  var fbContentID = 'fbContent0_' + String(i);
+                  var insertHTML2_6 = "<td><textarea id = "+fbContentID+">"+feedback+"</textarea></td>";
+                  var applyTr_fb = document.getElementById('applyTr'+String(i));
+                  applyTr_fb.insertAdjacentHTML('beforeend', insertHTML2_6);
+
+                  })
+
+                  
+              }
+                          
+              <% end %>
+
+          });
+          
+          var ref2 = firebase.database().ref("apply").child("202105").child(applyID).child("answer")     
+          ref2.on('value', function(snapshot) {
+              const good = snapshot.val().good           
+              const bad = snapshot.val().bad                
+              const practice = snapshot.val().practice
+              const URL = snapshot.val().URL                
+              const comment = snapshot.val().comment
+              
+              document.getElementById('applyShowAnswerTextArea1').value = good
+              document.getElementById('applyShowAnswerTextArea2').value = bad
+              document.getElementById('applyShowAnswerTextArea3').value = practice
+              document.getElementById('applyShowAnswerTextArea4').value = URL
+              document.getElementById('applyShowAnswerTextArea5').value = comment
+          });
+          <% end %>
+          
+      </script>
+      <script>
+
+          <% if @currentView == "fbNew" %>
+
+          $('#backToShow').on('click', function(){
+              window.location.href　= "/"           
+          })
+
+          <% end %>
+
+      
+      </script>
+      
+      <script>
+         
+          function alert(){
+              if(window.confirm('この内容で回答を送信します。よろしいですか？')){
+                  
+
+                  var anaPointIDArray = JSON.parse('<%= @anaPointID_j %>');
+                  var angleValueArray = JSON.parse('<%= @angleValue_j %>');
+                  var angleValueDiffArray = JSON.parse('<%= @angleValueDiff_j %>');
+                  var detailScoreArray = JSON.parse('<%= @detailScore_j %>');
+                  var fbFlagArray = JSON.parse('<%= @fbFlag_j %>');
+                  var anaCriteriaIDArray = JSON.parse('<%= @anaCriteriaID_j %>');
+                  var anaCriteriaTitleArray = JSON.parse('<%= @anaCriteriaTitle_j %>');
+                  var criteriaScoreArray = JSON.parse('<%= @criteriaScore_j %>');
+                  var fbFlagContentArray = [];
+                     
+                      var ref1 = firebase.database().ref("apply").child("202105").child(applyID)     
+                  
+                      ref1.on('value', function(snapshot) {
+                      const uid = snapshot.val().uid           
+                      const teamID = snapshot.val().teamID           
+
+//                      const good = document.getElementById('applyShowAnswerTextArea1').value;
+//                      const bad = document.getElementById('applyShowAnswerTextArea2').value;
+//                      const practice = document.getElementById('applyShowAnswerTextArea3').value;
+//                      const URL = document.getElementById('applyShowAnswerTextArea4').value;
+//                      const comment = document.getElementById('applyShowAnswerTextArea5').value;
+
+                    var score = '<%= @totalScore %>';
+                          
+                      var ref1_1 = firebase.database().ref("apply").child("202105").child(applyID).child("answer").child("summury")
+                      var ref1_2 = firebase.database().ref("apply").child("202105").child(applyID).child("answer").child("analytics").child("total")
+                      var ref2 = firebase.database().ref("user").child(uid).child("myApply").child("202105").child(applyID)
+                      var ref3 = firebase.database().ref("user").child(uid).child("myApply").child("202105").child(applyID).child("fcmTrigger")
+                      var ref4 = firebase.database().ref("team").child(teamID).child("apply").child("202105").child(applyID)
+
+//                      var data1_1 = { good: good, bad: bad, practice: practice, URL: URL, comment: comment };
+                      var data1_1 = { good: "", bad: "", practice: "", URL: "", comment: "" };
+                      var data1_2 = { score: score };
+                      var data2 = { answerFlag: "2" };
+                      var data3 = { fcmTrigger: "1" };
+
+                      ref1_1.update(data1_1);
+                      ref1_2.update(data1_2);
+                      ref2.update(data2);
+                      ref3.update(data3);
+                      ref4.update(data2);
+
+                     for (let i = 0; i < anaCriteriaIDArray.length; i++) {
+                                                      
+                      var anaCriteriaID = anaCriteriaIDArray[i];
+                      var anaCriteriaTitle = anaCriteriaTitleArray[i];
+                      var criteriaScore = criteriaScoreArray[i];
+                         
+                      var ref1_3 = firebase.database().ref("apply").child("202105").child(applyID).child("answer").child("analytics").child("criteria").child(anaCriteriaID)
+                      
+                      var data1_3 = { anaCriteriaID: anaCriteriaID,anaCriteriaTitle: anaCriteriaTitle,score: criteriaScore };
+                      ref1_3.update(data1_3);
+                          
+                     }
+                          
+                     for (let i = 0; i < anaPointIDArray.length; i++) {
+                         
+                         var anaCriteriaID_2 = "";
+
+                         if (anaPointIDArray[i] == "ANGLE_NECK"){
+                             
+                             anaCriteriaID_2 = "headPosition";
+                    
+                         }else if (anaPointIDArray[i] == "ANGLE_NECK" || anaPointIDArray[i] == "ANGLE_R_HIP" || anaPointIDArray[i] == "ANGLE_L_HIP" || anaPointIDArray[i] == "ANGLE_R_KNEE" || anaPointIDArray[i] == "ANGLE_L_KNEE" || anaPointIDArray[i] == "ANGLE_R_ANKLE" || anaPointIDArray[i] == "ANGLE_L_ANKLE"){
+
+                             anaCriteriaID_2 = "leg";
+                             
+                         }else if (anaPointIDArray[i] == "ANGLE_AXIS"){
+                         
+                             anaCriteriaID_2 = "axis";
+
+                         }else if (anaPointIDArray[i] == "ANGLE_L_ELBOW" || anaPointIDArray[i] == "ANGLE_R_ELBOW" || anaPointIDArray[i] == "ANGLE_L_HAND" || anaPointIDArray[i] == "ANGLE_R_HAND"){
+                             
+                             anaCriteriaID_2 = "arm";
+
+                         }else if (anaPointIDArray[i] == "ANGLE_GROUND"){
+                             
+                             anaCriteriaID_2 = "ground";
+
+                         }
+                         
+                      var anaPointID = anaPointIDArray[i];
+                      var angleValue = angleValueArray[i];
+                      var angleValueDiff = angleValueDiffArray[i];
+                      var detailScore = detailScoreArray[i];
+                      var fbFlag = fbFlagArray[i];
+                      
+                      var fbContent = document.getElementById('fbContent0_'+String(i)).value;
+                         
+                      var ref1_4 = firebase.database().ref("apply").child("202105").child(applyID).child("answer").child("analytics").child("point").child(anaPointID)
+                      
+                      var data1_4 = { anaPointID: anaPointID,anaCriteriaID: anaCriteriaID_2,value: angleValue,diff: angleValueDiff,score: detailScore,fbFlag: String(fbFlag),fbContent: fbContent };
+                      ref1_4.update(data1_4);
+                          
+                     }
+                      window.location.href　= "/apply/show?applyID=" + applyID 
+
+                  })
+
+                  
+              }else{
+              }
+          }  
+          function alert2(){
+              if(window.confirm('自動解析します。よろしいですか？')){                    
+                var text_concat_good = ""
+                var text_concat_bad = ""
+                var query = firebase.database().ref("analytics").child(applyID).orderByKey();
+                  query.once("value").then(function(snapshot) {
+                      snapshot.forEach(function(childSnapshot) {
+                          const id = childSnapshot.val().id
+                          const value = childSnapshot.val().value           
+
+                          var ref1 = firebase.database().ref("setting").child("analytics").child(id)     
+                          ref1.on('value', function(snapshot) {
+                              const feedback_bad = snapshot.val().feedback_bad           
+                              const feedback_good = snapshot.val().feedback_good           
+                              const rangeA = snapshot.val().rangeA           
+                              const rangeB = snapshot.val().rangeB           
+                              const rangeC = snapshot.val().rangeC           
+                              const rangeD = snapshot.val().rangeD
+
+                              if (Number(rangeA) < Number(value) && Number(value) < Number(rangeB)){
+                                  text_concat_good = text_concat_good.concat(feedback_good + "\n")
+                                  document.getElementById('applyShowAnswerTextArea1').value = text_concat_good
+                              }
+                              if (Number(value) < Number(rangeC) || Number(rangeD) < Number(value)){
+                                  text_concat_bad = text_concat_bad.concat(feedback_bad + "\n")
+                                  document.getElementById('applyShowAnswerTextArea2').value = text_concat_bad
+                              }
+                          })
+                      })     
+                  });
+              }else{
+              }
+          }            
+          function alert3(){
+              if(window.confirm('BigQueryから値を取得します。よろしいですか？')){ 
+                      window.location.href　= "/apply/edit_bq?applyID=" + applyID                 
+              }else{
+              }
+          }  
+                    
+          function alert4(){
+
+              if(window.confirm('このフィードバック内容で回答を送信します。よろしいですか？')){
+
+                  <% if @currentView2 == "fbNew" %>
+
+                  <% (0..@anaPointID.count-1).each do |i| %>
+
+                  const anaPointID = document.getElementById('anaPointID'<%= String(i) %>).value;
+                  const fb0 = document.getElementById('fb0_'<%= String(i) %>).value;
+                  const fb1 = document.getElementById('fb1_'<%= String(i) %>).value;
+                  const fb2 = document.getElementById('fb2_'<%= String(i) %>).value;
+
+                  var ref = firebase.database().ref("analytics").child("feedback").child(anaPointID[i])       
+                  var data = { anaPointID: anaPointID, fb0: fb0, fb1: fb1, fb2: fb2 };
+                  ref.update(data);
+
+                  <% end %>
+                                        
+                  window.location.href　= "/" 
+
+                  <% end %>
+
+              }else{
+              }
+
+          }  
+
+      </script>
+      <script>
+          <% if @currentView == "coachIndex" %>
+          var query = firebase.database().ref("coach").orderByKey();
+          query.once("value").then(function(snapshot) {
+              snapshot.forEach(function(childSnapshot) {
+                  const name = childSnapshot.val().name                
+                  const intro = childSnapshot.val().intro                
+                  var coachIndexTbody = document.getElementById('coachIndexTbody');
+                  var insertHTML = '<div class="card"><img class="card-img-top" src="/images/pathToYourImage.png" alt="Card image cap"><div class="card-body"><h4 class="card-title">'+ name + '</h4><p class="card-text">'+ intro +'</p></div></div>';
+                  coachIndexTbody.insertAdjacentHTML('afterbegin', insertHTML);
+              });
+          });
+          <% end %>
+      </script>
+    </head>
+
+    <body>
+
+        <% if user_signed_in? %>
+
+        <div class="sidebar" data-color="danger" data-background-color="white" data-image="/assets/sidebar-1.jpg">
+      <!--
+        Tip 1: You can change the color of the sidebar using: data-color="purple | azure | green | orange | danger"
+
+        Tip 2: you can also add an image using data-image tag
+    -->
+      <div class="logo">
+          <a class="simple-text logo-normal" href="/">
+          K-Studio-Admin<br>コーチ向け管理画面
+          </a></div>
+      <div class="sidebar-wrapper">
+        <ul class="nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/apply/index">
+              <i class="material-icons">dashboard</i>
+              <p>申込一覧</p>
+            </a>
+          </li>
+          <li class="nav-item ">
+            <a class="nav-link" href="/coach/index">
+              <i class="material-icons">person</i>
+              <p>コーチ一覧</p>
+            </a>
+          </li>
+<!--
+          <li class="nav-item ">
+            <a class="nav-link" href="/mobileAppSetting/index">
+              <i class="material-icons">content_paste</i>
+              <p>アプリUI/UX設定</p>
+            </a>
+          </li>
+          <li class="nav-item ">
+            <a class="nav-link" href="/mobileAppVesion/index">
+              <i class="material-icons">location_ons</i>
+              <p>アプリバージョン管理</p>
+            </a>
+          </li>
+-->
+          <li class="nav-item ">
+            <a class="nav-link" href="/app_analytics/index">
+              <i class="material-icons">bubble_chart</i>
+              <p>アプリ利用状況</p>
+            </a>
+          </li>
+          <li class="nav-item ">
+            <a class="nav-link" href="/account/top">
+              <i class="material-icons">notifications</i>
+              <p>アカウント</p>
+            </a>
+          </li>
+          <li class="nav-item ">
+            <a class="nav-link" href="/apply/test">
+              <i class="material-icons">notifications</i>
+              <p>解析テスト</p>
+            </a>
+          </li>
+          <li class="nav-item ">
+            <a class="nav-link" href="/apply/fbNew">
+              <i class="material-icons">notifications</i>
+              <p>設定</p>
+            </a>
+          </li>
+          <li class="nav-item ">
+            <a class="nav-link" >
+<!--              <i class="material-icons">notifications</i>-->
+              <p><%= link_to 'ログアウト', sign_out_path %></p>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+        <% else %>
+        <%= link_to 'ログイン', new_user_session_path %>
+        <% end %>
+
+        
+      <%= yield %>
+
+          <!--   Core JS Files   -->
+
+  <script>
+    $(document).ready(function() {
+      $().ready(function() {
+        $sidebar = $('.sidebar');
+
+        $sidebar_img_container = $sidebar.find('.sidebar-background');
+
+        $full_page = $('.full-page');
+
+        $sidebar_responsive = $('body > .navbar-collapse');
+
+        window_width = $(window).width();
+
+        fixed_plugin_open = $('.sidebar .sidebar-wrapper .nav li.active a p').html();
+
+        if (window_width > 767 && fixed_plugin_open == 'Dashboard') {
+          if ($('.fixed-plugin .dropdown').hasClass('show-dropdown')) {
+            $('.fixed-plugin .dropdown').addClass('open');
+          }
+
+        }
+
+        $('.fixed-plugin a').click(function(event) {
+          // Alex if we click on switch, stop propagation of the event, so the dropdown will not be hide, otherwise we set the  section active
+          if ($(this).hasClass('switch-trigger')) {
+            if (event.stopPropagation) {
+              event.stopPropagation();
+            } else if (window.event) {
+              window.event.cancelBubble = true;
+            }
+          }
+        });
+
+        $('.fixed-plugin .active-color span').click(function() {
+          $full_page_background = $('.full-page-background');
+
+          $(this).siblings().removeClass('active');
+          $(this).addClass('active');
+
+          var new_color = $(this).data('color');
+
+          if ($sidebar.length != 0) {
+            $sidebar.attr('data-color', new_color);
+          }
+
+          if ($full_page.length != 0) {
+            $full_page.attr('filter-color', new_color);
+          }
+
+          if ($sidebar_responsive.length != 0) {
+            $sidebar_responsive.attr('data-color', new_color);
+          }
+        });
+
+        $('.fixed-plugin .background-color .badge').click(function() {
+          $(this).siblings().removeClass('active');
+          $(this).addClass('active');
+
+          var new_color = $(this).data('background-color');
+
+          if ($sidebar.length != 0) {
+            $sidebar.attr('data-background-color', new_color);
+          }
+        });
+
+        $('.fixed-plugin .img-holder').click(function() {
+          $full_page_background = $('.full-page-background');
+
+          $(this).parent('li').siblings().removeClass('active');
+          $(this).parent('li').addClass('active');
+
+
+          var new_image = $(this).find("img").attr('src');
+
+          if ($sidebar_img_container.length != 0 && $('.switch-sidebar-image input:checked').length != 0) {
+            $sidebar_img_container.fadeOut('fast', function() {
+              $sidebar_img_container.css('background-image', 'url("' + new_image + '")');
+              $sidebar_img_container.fadeIn('fast');
+            });
+          }
+
+          if ($full_page_background.length != 0 && $('.switch-sidebar-image input:checked').length != 0) {
+            var new_image_full_page = $('.fixed-plugin li.active .img-holder').find('img').data('src');
+
+            $full_page_background.fadeOut('fast', function() {
+              $full_page_background.css('background-image', 'url("' + new_image_full_page + '")');
+              $full_page_background.fadeIn('fast');
+            });
+          }
+
+          if ($('.switch-sidebar-image input:checked').length == 0) {
+            var new_image = $('.fixed-plugin li.active .img-holder').find("img").attr('src');
+            var new_image_full_page = $('.fixed-plugin li.active .img-holder').find('img').data('src');
+
+            $sidebar_img_container.css('background-image', 'url("' + new_image + '")');
+            $full_page_background.css('background-image', 'url("' + new_image_full_page + '")');
+          }
+
+          if ($sidebar_responsive.length != 0) {
+            $sidebar_responsive.css('background-image', 'url("' + new_image + '")');
+          }
+        });
+
+        $('.switch-sidebar-image input').change(function() {
+          $full_page_background = $('.full-page-background');
+
+          $input = $(this);
+
+          if ($input.is(':checked')) {
+            if ($sidebar_img_container.length != 0) {
+              $sidebar_img_container.fadeIn('fast');
+              $sidebar.attr('data-image', '#');
+            }
+
+            if ($full_page_background.length != 0) {
+              $full_page_background.fadeIn('fast');
+              $full_page.attr('data-image', '#');
+            }
+
+            background_image = true;
+          } else {
+            if ($sidebar_img_container.length != 0) {
+              $sidebar.removeAttr('data-image');
+              $sidebar_img_container.fadeOut('fast');
+            }
+
+            if ($full_page_background.length != 0) {
+              $full_page.removeAttr('data-image', '#');
+              $full_page_background.fadeOut('fast');
+            }
+
+            background_image = false;
+          }
+        });
+
+        $('.switch-sidebar-mini input').change(function() {
+          $body = $('body');
+
+          $input = $(this);
+
+          if (md.misc.sidebar_mini_active == true) {
+            $('body').removeClass('sidebar-mini');
+            md.misc.sidebar_mini_active = false;
+
+            $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar();
+
+          } else {
+
+            $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar('destroy');
+
+            setTimeout(function() {
+              $('body').addClass('sidebar-mini');
+
+              md.misc.sidebar_mini_active = true;
+            }, 300);
+          }
+
+          // we simulate the window Resize so the charts will get updated in realtime.
+          var simulateWindowResize = setInterval(function() {
+            window.dispatchEvent(new Event('resize'));
+          }, 180);
+
+          // we stop the simulation of Window Resize after the animations are completed
+          setTimeout(function() {
+            clearInterval(simulateWindowResize);
+          }, 1000);
+
+        });
+      });
+    });
+  </script>
+    </body>
+
+</html>
