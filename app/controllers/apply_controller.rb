@@ -86,17 +86,21 @@ before_action :authenticate_user!
 
         require "google/cloud/bigquery"
         bigquery = Google::Cloud::Bigquery.new
-
-        sql1     = "select * from kstudio.KST0610T_userValue where ANALYTICS_ID = '2021_02_16_00_27_41_Kスタデモ' and FRAME = '1';"
+        
+        sql1_text = "select * from motionplotdb.KST0610T_userValue where ANALYTICS_ID = '2021_05_20_20_32_54_Yusei' and FRAME = 1;"
+        sql1     = sql1_text
         results1 = bigquery.query sql1
         
-        sql2     = "select * from kstudio.KST0610T_userScore where ANALYTICS_ID = '2021_02_16_00_27_41_Kスタデモ' and FRAME = '1';"
+        sql2_text = "select * from motionplotdb.KST0610T_userScore where ANALYTICS_ID = '2021_05_20_20_32_54_Yusei' and FRAME = 1;"
+        sql2     =  sql2_text
         results2 = bigquery.query sql2
 
-        sql3     = "select * from kstudio.KST0610T_userScoreFB where ANALYTICS_ID = '2021_02_16_00_27_41_Kスタデモ' and FRAME = '1';"
+        sql3_text = "select * from motionplotdb.KST0610T_userScoreFB where ANALYTICS_ID = '2021_05_20_20_32_54_Yusei' and FRAME = 1;"
+        sql3     =  sql3_text
         results3 = bigquery.query sql3
 
-        sql4     = "select * from kstudio.KST0610T_userValueDiff where ANALYTICS_ID = '2021_02_16_00_27_41_Kスタデモ' and FRAME = '1';"
+        sql4_text = "select * from motionplotdb.KST0610T_userValueDiff where ANALYTICS_ID = '2021_05_20_20_32_54_Yusei' and FRAME = 1;"
+        sql4     =  sql4_text
         results4 = bigquery.query sql4
 
         results1.each do |row|
@@ -113,7 +117,7 @@ before_action :authenticate_user!
             @angleValue.push(row[:ANGLE_R_ELBOW].floor)
             @angleValue.push(row[:ANGLE_L_HAND].floor)
             @angleValue.push(row[:ANGLE_R_HAND].floor)
-            @angleValue.push(row[:ANGLE_GROUND].floor)
+#            @angleValue.push(row[:ANGLE_R_COM].floor)
         end
 
         results2.each do |row|
@@ -130,7 +134,7 @@ before_action :authenticate_user!
             @detailScore.push(row[:ANGLE_R_ELBOW].floor)
             @detailScore.push(row[:ANGLE_L_HAND].floor)
             @detailScore.push(row[:ANGLE_R_HAND].floor)
-            @detailScore.push(row[:ANGLE_GROUND].floor)
+#            @detailScore.push(row[:ANGLE_R_COM].floor)
         end
 
         results3.each do |row|
@@ -147,7 +151,7 @@ before_action :authenticate_user!
             @fbFlag.push(row[:ANGLE_R_ELBOW].floor)
             @fbFlag.push(row[:ANGLE_L_HAND].floor)
             @fbFlag.push(row[:ANGLE_R_HAND].floor)
-            @fbFlag.push(row[:ANGLE_GROUND].floor)
+#            @fbFlag.push(row[:ANGLE_R_COM].floor)
         end
         
         results4.each do |row|
@@ -164,7 +168,7 @@ before_action :authenticate_user!
             @angleValueDiff.push(row[:ANGLE_R_ELBOW].floor)
             @angleValueDiff.push(row[:ANGLE_L_HAND].floor)
             @angleValueDiff.push(row[:ANGLE_R_HAND].floor)
-            @angleValueDiff.push(row[:ANGLE_GROUND].floor)
+#            @angleValueDiff.push(row[:ANGLE_R_COM].floor)
         end
 
         @criteriaScore[0] = @detailScore[0].floor
@@ -172,7 +176,7 @@ before_action :authenticate_user!
         @criteriaScore[2] = @detailScore[7].floor
         @criteriaScore[3] = ((@detailScore[8] + @detailScore[9] + @detailScore[10] + @detailScore[11])/4).floor
         @criteriaScore[4] = @detailScore[12].floor
-        @totalScore = ((@criteriaScore[0] + @criteriaScore[1] + @criteriaScore[2] + @criteriaScore[3] + @criteriaScore[4])/5).floor
+        @totalScore = ((@criteriaScore[0] + @criteriaScore[1] + @criteriaScore[2] + @criteriaScore[3] + @criteriaScore[4])).floor
         
         @anaPointID_j = @anaPointID.to_json.html_safe
         @angleValue_j = @angleValue.to_json.html_safe

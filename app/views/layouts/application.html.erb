@@ -57,10 +57,17 @@
           var date = new Date();
           var y = date.getFullYear();
           var m = ('00' + (date.getMonth()+1)).slice(-2);          
-          var yyyy_mm = String(y) + String(m);
+          var yyyy_mm = String(y) +"年"+ String(m);
           
           var id = 1;
-          var query = firebase.database().ref("apply").child("202105").orderByKey();
+          var query = firebase.database().ref("apply").child("all").orderByKey();
+
+          function getYYYYMM(){
+              var textbox_element = document.getElementById('applyIndexLabel1');
+              var insertHTML = '<div>'+ yyyy_mm + "月度" +'</div>';
+              textbox_element.insertAdjacentHTML('afterbegin', insertHTML);              
+          }
+          
      
           query.once("value").then(function(snapshot) {
             snapshot.forEach(function(childSnapshot) {
@@ -80,19 +87,19 @@
                 const memo = childSnapshot.val().memo                
                 const date = childSnapshot.val().date  
                 const time = childSnapshot.val().time  
-                var applyTbodyElement = [id,"img",answerFlag_Text,date+" "+time,userName,memo,"detail","analytics"]
+                var applyTbodyElement = [id,"img",answerFlag_Text,date+" "+time,userName,memo,applyID,"detail"]
 
                 var applyTrID = "applyTr" + String(id);
                 var applyTrID_Button = "applyTr" + String(id) + "_Button";
                 var applyTrID_Analytics = "applyTr" + String(id) + "_Analytics";
-                
-                var textbox_element = document.getElementById('applyIndexLabel1');
-                var insertHTML = '<div>'+ yyyy_mm + "月度" +'</div>';
-                textbox_element.insertAdjacentHTML('afterbegin', insertHTML);
-                                
+                                                
                 var textbox_element = document.getElementById('applyTbody');
                 var insertHTML = '<tr id = ' + applyTrID + '>';
                 textbox_element.insertAdjacentHTML('afterbegin', insertHTML);
+                
+                if (id == 1){
+                    getYYYYMM();
+                }
 
                 id = id + 1;
 
@@ -104,7 +111,7 @@
                         new_element1.id = applyTrID+"_img";
                         textbox_element.appendChild(new_element1);
 
-                        ref1 = firebase.storage().ref().child('user').child(uid).child('myApply').child("202105").child(applyID).child(applyID + '.png');
+                        ref1 = firebase.storage().ref().child('user').child(uid).child('myApply').child("all").child(applyID).child(applyID + '.png');
                         ref1.getDownloadURL().then((url) => {
                             var textbox_element2 = document.getElementById(applyTrID+"_img");
                             var new_element2 = document.createElement('img');
@@ -112,6 +119,10 @@
                             new_element2.controls = true;
                             new_element2.style = "width:200px; height:100px;";
                             textbox_element2.appendChild(new_element2);     
+
+//                            var new_element3 = document.createElement('div');
+//                            new_element3.textContent = "申込ID:"+applyID;
+//                            textbox_element2.appendChild(new_element3);     
                         });
                         
                     }else if (applyTbodyElement[i] == "detail"){
@@ -121,12 +132,12 @@
                         $('#' + applyTrID_Button).on('click', function(){
                             window.location.href　= "/apply/show?applyID=" + applyID 
                         })
-                    }else if (applyTbodyElement[i] == "analytics"){
-                        var insertHTML = '<td><button id = ' + applyTrID_Analytics + ' class="btn btn-secondary" type="button">解析データ</td>';
-                        textbox_element.insertAdjacentHTML('beforeend', insertHTML);
-                        $('#' + applyTrID_Analytics).on('click', function(){
-                            window.location.href　= "/analytics/show?applyID=" + applyID 
-                        })
+//                    }else if (applyTbodyElement[i] == "analytics"){
+//                        var insertHTML = '<td><button id = ' + applyTrID_Analytics + ' class="btn btn-secondary" type="button">解析データ</td>';
+//                        textbox_element.insertAdjacentHTML('beforeend', insertHTML);
+//                        $('#' + applyTrID_Analytics).on('click', function(){
+//                            window.location.href　= "/analytics/show?applyID=" + applyID 
+//                        })
                     }else{
                         var new_element = document.createElement('td');
                         new_element.textContent = applyTbodyElement[i];
@@ -151,7 +162,7 @@
           var yyyy_mm = String(y) + String(m);
           
           var applyID = '<%= @applyID %>';
-          var ref1 = firebase.database().ref("apply").child("202105").child(applyID)     
+          var ref1 = firebase.database().ref("apply").child("all").child(applyID)     
           ref1.on('value', function(snapshot) {
               const uid = snapshot.val().uid           
               const userName = snapshot.val().userName                
@@ -229,7 +240,7 @@
           var yyyy_mm = String(y) + String(m);
 
           var applyID = '<%= @applyID %>';
-          var ref1 = firebase.database().ref("apply").child("202105").child(applyID)    
+          var ref1 = firebase.database().ref("apply").child("all").child(applyID)    
           ref1.on('value', function(snapshot) {
               const uid = snapshot.val().uid           
               const userName = snapshot.val().userName                
@@ -335,7 +346,7 @@
 
           });
           
-          var ref2 = firebase.database().ref("apply").child("202105").child(applyID).child("answer")     
+          var ref2 = firebase.database().ref("apply").child("all").child(applyID).child("answer")     
           ref2.on('value', function(snapshot) {
               const good = snapshot.val().good           
               const bad = snapshot.val().bad                
@@ -381,7 +392,7 @@
                   var criteriaScoreArray = JSON.parse('<%= @criteriaScore_j %>');
                   var fbFlagContentArray = [];
                      
-                      var ref1 = firebase.database().ref("apply").child("202105").child(applyID)     
+                      var ref1 = firebase.database().ref("apply").child("all").child(applyID)     
                   
                       ref1.on('value', function(snapshot) {
                       const uid = snapshot.val().uid           
@@ -395,11 +406,11 @@
 
                     var score = '<%= @totalScore %>';
                           
-                      var ref1_1 = firebase.database().ref("apply").child("202105").child(applyID).child("answer").child("summury")
-                      var ref1_2 = firebase.database().ref("apply").child("202105").child(applyID).child("answer").child("analytics").child("total")
-                      var ref2 = firebase.database().ref("user").child(uid).child("myApply").child("202105").child(applyID)
-                      var ref3 = firebase.database().ref("user").child(uid).child("myApply").child("202105").child(applyID).child("fcmTrigger")
-                      var ref4 = firebase.database().ref("team").child(teamID).child("apply").child("202105").child(applyID)
+                      var ref1_1 = firebase.database().ref("apply").child("all").child(applyID).child("answer").child("summury")
+                      var ref1_2 = firebase.database().ref("apply").child("all").child(applyID).child("answer").child("analytics").child("total")
+                      var ref2 = firebase.database().ref("user").child(uid).child("myApply").child("all").child(applyID)
+                      var ref3 = firebase.database().ref("user").child(uid).child("myApply").child("all").child(applyID).child("fcmTrigger")
+                      var ref4 = firebase.database().ref("team").child(teamID).child("apply").child("all").child(applyID)
 
 //                      var data1_1 = { good: good, bad: bad, practice: practice, URL: URL, comment: comment };
                       var data1_1 = { good: "", bad: "", practice: "", URL: "", comment: "" };
@@ -419,7 +430,7 @@
                       var anaCriteriaTitle = anaCriteriaTitleArray[i];
                       var criteriaScore = criteriaScoreArray[i];
                          
-                      var ref1_3 = firebase.database().ref("apply").child("202105").child(applyID).child("answer").child("analytics").child("criteria").child(anaCriteriaID)
+                      var ref1_3 = firebase.database().ref("apply").child("all").child(applyID).child("answer").child("analytics").child("criteria").child(anaCriteriaID)
                       
                       var data1_3 = { anaCriteriaID: anaCriteriaID,anaCriteriaTitle: anaCriteriaTitle,score: criteriaScore };
                       ref1_3.update(data1_3);
@@ -460,7 +471,7 @@
                       
                       var fbContent = document.getElementById('fbContent0_'+String(i)).value;
                          
-                      var ref1_4 = firebase.database().ref("apply").child("202105").child(applyID).child("answer").child("analytics").child("point").child(anaPointID)
+                      var ref1_4 = firebase.database().ref("apply").child("all").child(applyID).child("answer").child("analytics").child("point").child(anaPointID)
                       
                       var data1_4 = { anaPointID: anaPointID,anaCriteriaID: anaCriteriaID_2,value: angleValue,diff: angleValueDiff,score: detailScore,fbFlag: String(fbFlag),fbContent: fbContent };
                       ref1_4.update(data1_4);
