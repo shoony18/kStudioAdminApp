@@ -367,6 +367,43 @@
 
           <% if @currentView == "fbNew" %>
 
+          var i = 0;
+          var anaPointIDArray = [];
+//          anaPointIDArray = @anaPointIDArray;
+          var query = firebase.database().ref("analytics").child("feedback").orderByKey();          
+     
+          query.once("value").then(function(snapshot) {
+            snapshot.forEach(function(childSnapshot) {
+                
+                const anaPointID = childSnapshot.val().anaPointID
+                anaPointIDArray.push(anaPointID);
+                const fb0 = childSnapshot.val().fb0           
+                const fb1 = childSnapshot.val().fb1           
+                const fb2 = childSnapshot.val().fb2           
+                const range_start = childSnapshot.val().range_start           
+                const range_end = childSnapshot.val().range_end           
+                                                      
+                var textbox_element_anaPointID = document.getElementById('anaPointID_'+String(i));
+                var textbox_element_fb0 = document.getElementById('fb0_'+String(i));
+                var textbox_element_fb1 = document.getElementById('fb1_'+String(i));
+                var textbox_element_fb2 = document.getElementById('fb2_'+String(i));
+                var textbox_element_range_start = document.getElementById('range_start_'+String(i));
+                var textbox_element_range_end = document.getElementById('range_end_'+String(i));
+
+                textbox_element_anaPointID.insertAdjacentHTML('afterbegin', anaPointID);
+                textbox_element_fb0.insertAdjacentHTML('afterbegin', fb0);
+                textbox_element_fb1.insertAdjacentHTML('afterbegin', fb1);
+                textbox_element_fb2.insertAdjacentHTML('afterbegin', fb2);
+                textbox_element_range_start.insertAdjacentHTML('afterbegin', range_start);
+                textbox_element_range_end.insertAdjacentHTML('afterbegin', range_end);
+                
+                i = i + 1;
+                
+            });
+          });
+          
+          
+
           $('#backToShow').on('click', function(){
               window.location.href　= "/"           
           })
@@ -529,24 +566,34 @@
 
               if(window.confirm('このフィードバック内容で回答を送信します。よろしいですか？')){
 
-                  <% if @currentView2 == "fbNew" %>
+//                  % if @currentView2 == "fbNew" %>
+                 
+//                  var anaPointIDArray = [];
+//                  anaPointIDArray = ["ANGLE_NECK","ANGLE_R_SHOULDER","ANGLE_L_SHOULDER","ANGLE_L_ELBOW","ANGLE_R_ELBOW","ANGLE_R_HIP","ANGLE_L_HIP","ANGLE_R_KNEE","ANGLE_L_KNEE","ANGLE_R_ANKLE","ANGLE_L_ANKLE","ANGLE_AXIS","ANGLE_GROUND"];
 
-                  <% (0..@anaPointID.count-1).each do |i| %>
+                  
+                  for (let i = 0; i < anaPointIDArray.length; i++) {         
+                      const anaPointID = document.getElementById('anaPointID_'+String(i)).value;
+                      const fb0 = document.getElementById('fb0_'+String(i)).value;
+                      const fb1 = document.getElementById('fb1_'+String(i)).value;
+                      const fb2 = document.getElementById('fb2_'+String(i)).value;
+                      const range_start = document.getElementById('range_start_'+String(i)).value;
+                      const range_end = document.getElementById('range_end_'+String(i)).value;
 
-                  const anaPointID = document.getElementById('anaPointID'<%= String(i) %>).value;
-                  const fb0 = document.getElementById('fb0_'<%= String(i) %>).value;
-                  const fb1 = document.getElementById('fb1_'<%= String(i) %>).value;
-                  const fb2 = document.getElementById('fb2_'<%= String(i) %>).value;
+                      var ref = firebase.database().ref("analytics").child("feedback").child(anaPointIDArray[i])       
+                      var data = { anaPointID: anaPointID, fb0: fb0, fb1: fb1, fb2: fb2, range_start: range_start, range_end: range_end };
+                      ref.update(data);
+  
+                  }
 
-                  var ref = firebase.database().ref("analytics").child("feedback").child(anaPointID[i])       
-                  var data = { anaPointID: anaPointID, fb0: fb0, fb1: fb1, fb2: fb2 };
-                  ref.update(data);
+//                  % (0..@anaPointID.count-1).each do |i| %>
 
-                  <% end %>
+
+//                  % end %>
                                         
                   window.location.href　= "/" 
 
-                  <% end %>
+//                  % end %>
 
               }else{
               }
@@ -633,7 +680,7 @@
           <li class="nav-item ">
             <a class="nav-link" href="/apply/fbNew">
               <i class="material-icons">notifications</i>
-              <p>設定</p>
+              <p>教師データ設定</p>
             </a>
           </li>
           <li class="nav-item ">
