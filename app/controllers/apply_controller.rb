@@ -73,7 +73,7 @@ before_action :authenticate_user!
 #        @firebaseInfo = FirebaseInfo.find_by(id:1)
         @applyID = params[:applyID]
 
-        @anaPointID = ["ANGLE_NECK","ANGLE_R_SHOULDER","ANGLE_L_SHOULDER","ANGLE_L_ELBOW","ANGLE_R_ELBOW","ANGLE_R_HIP","ANGLE_L_HIP","ANGLE_R_KNEE","ANGLE_L_KNEE","ANGLE_R_ANKLE","ANGLE_L_ANKLE","ANGLE_AXIS","ANGLE_GROUND"]
+        @anaPointID = ["ANGLE_NECK","ANGLE_R_SHOULDER","ANGLE_L_SHOULDER","ANGLE_R_ELBOW","ANGLE_L_ELBOW","ANGLE_R_HIP","ANGLE_L_HIP","ANGLE_R_KNEE","ANGLE_L_KNEE","ANGLE_R_ANKLE","ANGLE_L_ANKLE","ANGLE_R_COM","ANGLE_L_COM"]
         @angleValue = []
         @angleValueDiff = []
         @detailScore = []
@@ -87,19 +87,19 @@ before_action :authenticate_user!
         require "google/cloud/bigquery"
         bigquery = Google::Cloud::Bigquery.new
         
-        sql1_text = "select * from motionplotdb.KST0610T_userValue where ANALYTICS_ID = '"+applyID+"' and FRAME = 1;"
+        sql1_text = "select * from motionplotdb.KST0610T_userValue where ANALYTICS_ID = '"+@applyID+"' and FRAME = 0;"
         sql1     = sql1_text
         results1 = bigquery.query sql1
         
-        sql2_text = "select * from motionplotdb.KST0610T_userScore where ANALYTICS_ID = '"+applyID+"' and FRAME = 1;"
+        sql2_text = "select * from motionplotdb.KST0610T_userScore where ANALYTICS_ID = '"+@applyID+"' and FRAME = 0;"
         sql2     =  sql2_text
         results2 = bigquery.query sql2
 
-        sql3_text = "select * from motionplotdb.KST0610T_userScoreFB where ANALYTICS_ID = '"+applyID+"' and FRAME = 1;"
+        sql3_text = "select * from motionplotdb.KST0610T_userScoreFB where ANALYTICS_ID = '"+@applyID+"' and FRAME = 0;"
         sql3     =  sql3_text
         results3 = bigquery.query sql3
 
-        sql4_text = "select * from motionplotdb.KST0610T_userValueDiff where ANALYTICS_ID = '"+applyID+"' and FRAME = 1;"
+        sql4_text = "select * from motionplotdb.KST0610T_userValueDiff where ANALYTICS_ID = '"+@applyID+"' and FRAME = 0;"
         sql4     =  sql4_text
         results4 = bigquery.query sql4
 
@@ -108,16 +108,16 @@ before_action :authenticate_user!
             @angleValue.push(row[:ANGLE_NECK].floor)
             @angleValue.push(row[:ANGLE_R_SHOULDER].floor)
             @angleValue.push(row[:ANGLE_L_SHOULDER].floor)
-            @angleValue.push(row[:ANGLE_L_ELBOW].floor)
             @angleValue.push(row[:ANGLE_R_ELBOW].floor)
+            @angleValue.push(row[:ANGLE_L_ELBOW].floor)
             @angleValue.push(row[:ANGLE_R_HIP].floor)
             @angleValue.push(row[:ANGLE_L_HIP].floor)
             @angleValue.push(row[:ANGLE_R_KNEE].floor)
             @angleValue.push(row[:ANGLE_L_KNEE].floor)
             @angleValue.push(row[:ANGLE_R_ANKLE].floor)
             @angleValue.push(row[:ANGLE_L_ANKLE].floor)
-            @angleValue.push(row[:ANGLE_AXIS].floor)
             @angleValue.push(row[:ANGLE_R_COM].floor)
+            @angleValue.push(row[:ANGLE_L_COM].floor)
         end
 
         results2.each do |row|
@@ -125,16 +125,16 @@ before_action :authenticate_user!
             @detailScore.push(row[:ANGLE_NECK].floor)
             @detailScore.push(row[:ANGLE_R_SHOULDER].floor)
             @detailScore.push(row[:ANGLE_L_SHOULDER].floor)
-            @detailScore.push(row[:ANGLE_L_ELBOW].floor)
             @detailScore.push(row[:ANGLE_R_ELBOW].floor)
+            @detailScore.push(row[:ANGLE_L_ELBOW].floor)
             @detailScore.push(row[:ANGLE_R_HIP].floor)
             @detailScore.push(row[:ANGLE_L_HIP].floor)
             @detailScore.push(row[:ANGLE_R_KNEE].floor)
             @detailScore.push(row[:ANGLE_L_KNEE].floor)
             @detailScore.push(row[:ANGLE_R_ANKLE].floor)
             @detailScore.push(row[:ANGLE_L_ANKLE].floor)
-            @detailScore.push(row[:ANGLE_AXIS].floor)
             @detailScore.push(row[:ANGLE_R_COM].floor)
+            @detailScore.push(row[:ANGLE_L_COM].floor)
         end
 
         results3.each do |row|
@@ -142,16 +142,16 @@ before_action :authenticate_user!
             @fbFlag.push(row[:ANGLE_NECK].floor)
             @fbFlag.push(row[:ANGLE_R_SHOULDER].floor)
             @fbFlag.push(row[:ANGLE_L_SHOULDER].floor)
-            @fbFlag.push(row[:ANGLE_L_ELBOW].floor)
             @fbFlag.push(row[:ANGLE_R_ELBOW].floor)
+            @fbFlag.push(row[:ANGLE_L_ELBOW].floor)
             @fbFlag.push(row[:ANGLE_R_HIP].floor)
             @fbFlag.push(row[:ANGLE_L_HIP].floor)
             @fbFlag.push(row[:ANGLE_R_KNEE].floor)
             @fbFlag.push(row[:ANGLE_L_KNEE].floor)
             @fbFlag.push(row[:ANGLE_R_ANKLE].floor)
             @fbFlag.push(row[:ANGLE_L_ANKLE].floor)
-            @fbFlag.push(row[:ANGLE_AXIS].floor)
             @fbFlag.push(row[:ANGLE_R_COM].floor)
+            @fbFlag.push(row[:ANGLE_L_COM].floor)
         end
         
         results4.each do |row|
@@ -159,16 +159,16 @@ before_action :authenticate_user!
             @angleValueDiff.push(row[:ANGLE_NECK].floor)
             @angleValueDiff.push(row[:ANGLE_R_SHOULDER].floor)
             @angleValueDiff.push(row[:ANGLE_L_SHOULDER].floor)
-            @angleValueDiff.push(row[:ANGLE_L_ELBOW].floor)
             @angleValueDiff.push(row[:ANGLE_R_ELBOW].floor)
+            @angleValueDiff.push(row[:ANGLE_L_ELBOW].floor)
             @angleValueDiff.push(row[:ANGLE_R_HIP].floor)
             @angleValueDiff.push(row[:ANGLE_L_HIP].floor)
             @angleValueDiff.push(row[:ANGLE_R_KNEE].floor)
             @angleValueDiff.push(row[:ANGLE_L_KNEE].floor)
             @angleValueDiff.push(row[:ANGLE_R_ANKLE].floor)
             @angleValueDiff.push(row[:ANGLE_L_ANKLE].floor)
-            @angleValueDiff.push(row[:ANGLE_AXIS].floor)
             @angleValueDiff.push(row[:ANGLE_R_COM].floor)
+            @angleValueDiff.push(row[:ANGLE_L_COM].floor)
         end
 
         @criteriaScore[0] = @detailScore[0].floor

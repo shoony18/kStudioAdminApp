@@ -490,7 +490,7 @@
                          
                              anaCriteriaID_2 = "axis";
 
-                         }else if (anaPointIDArray[i] == "ANGLE_L_ELBOW" || anaPointIDArray[i] == "ANGLE_R_ELBOW" || anaPointIDArray[i] == "ANGLE_L_HAND" || anaPointIDArray[i] == "ANGLE_R_HAND"){
+                         }else if (anaPointIDArray[i] == "ANGLE_L_ELBOW" || anaPointIDArray[i] == "ANGLE_R_ELBOW" || anaPointIDArray[i] == "ANGLE_L_SHOULDER" || anaPointIDArray[i] == "ANGLE_R_SHOULDER"){
                              
                              anaCriteriaID_2 = "arm";
 
@@ -580,7 +580,7 @@
                       const range_start = document.getElementById('range_start_'+String(i)).value;
                       const range_end = document.getElementById('range_end_'+String(i)).value;
 
-                      var ref = firebase.database().ref("analytics").child("feedback").child(anaPointIDArray[i])       
+                      var ref = firebase.database().ref("analytics").child("feedback").child(anaPointID)       
                       var data = { anaPointID: anaPointID, fb0: fb0, fb1: fb1, fb2: fb2, range_start: range_start, range_end: range_end };
                       ref.update(data);
   
