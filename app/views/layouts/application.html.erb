@@ -310,6 +310,8 @@
                   var anaCriteriaTitleArray = JSON.parse('<%= @anaCriteriaTitle_j %>');
                   var criteriaScoreArray = JSON.parse('<%= @criteriaScore_j %>');
                   var fbFlagContentArray = [];
+                  var range_start_Array = JSON.parse('<%= @range_start_j %>');
+                  var range_end_Array = JSON.parse('<%= @range_end_j %>');
 
 
               for (let i = 0; i < anaPointIDArray.length; i++) {
@@ -428,6 +430,8 @@
                   var anaCriteriaTitleArray = JSON.parse('<%= @anaCriteriaTitle_j %>');
                   var criteriaScoreArray = JSON.parse('<%= @criteriaScore_j %>');
                   var fbFlagContentArray = [];
+                  var range_start_Array = JSON.parse('<%= @range_start_j %>');
+                  var range_end_Array = JSON.parse('<%= @range_end_j %>');
                      
                       var ref1 = firebase.database().ref("apply").child("all").child(applyID)     
                   
@@ -505,12 +509,14 @@
                       var angleValueDiff = angleValueDiffArray[i];
                       var detailScore = detailScoreArray[i];
                       var fbFlag = fbFlagArray[i];
+                      var range_start = range_start_Array[i];
+                      var range_end = range_end_Array[i];
                       
                       var fbContent = document.getElementById('fbContent0_'+String(i)).value;
                          
                       var ref1_4 = firebase.database().ref("apply").child("all").child(applyID).child("answer").child("analytics").child("point").child(anaPointID)
                       
-                      var data1_4 = { anaPointID: anaPointID,anaCriteriaID: anaCriteriaID_2,value: angleValue,diff: angleValueDiff,score: detailScore,fbFlag: String(fbFlag),fbContent: fbContent };
+                      var data1_4 = { anaPointID: anaPointID,anaCriteriaID: anaCriteriaID_2,value: angleValue,diff: angleValueDiff,score: detailScore,fbFlag: String(fbFlag),fbContent: fbContent,range_start: range_start,range_end: range_end };
                       ref1_4.update(data1_4);
                           
                      }
@@ -577,8 +583,8 @@
                       const fb0 = document.getElementById('fb0_'+String(i)).value;
                       const fb1 = document.getElementById('fb1_'+String(i)).value;
                       const fb2 = document.getElementById('fb2_'+String(i)).value;
-                      const range_start = document.getElementById('range_start_'+String(i)).value;
-                      const range_end = document.getElementById('range_end_'+String(i)).value;
+                      const range_start = Number(document.getElementById('range_start_'+String(i)).value);
+                      const range_end = Number(document.getElementById('range_end_'+String(i)).value);
 
                       var ref = firebase.database().ref("analytics").child("feedback").child(anaPointID)       
                       var data = { anaPointID: anaPointID, fb0: fb0, fb1: fb1, fb2: fb2, range_start: range_start, range_end: range_end };

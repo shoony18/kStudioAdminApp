@@ -66,6 +66,12 @@
                           解析ポイント
                         </th>
                         <th>
+                          range_start(始点)
+                        </th>
+                        <th>
+                          range_end(終点)
+                        </th>
+                        <th>
                           角度
                         </th>
                         <th>
@@ -86,6 +92,8 @@
                           <tr id="applyTr<%= String(i) %>">
                               <td><%= String(i+1) %></td>
                               <td><textarea id = "anaPointID<%= String(i) %>"><%= @anaPointID[i] %></textarea></td>
+                              <td><textarea id = "range_start<%= String(i) %>"><%= @range_start[i] %></textarea></td>
+                              <td><textarea id = "range_end<%= String(i) %>"><%= @range_end[i] %></textarea></td>
                               <td><textarea id = "angleValue<%= String(i) %>"><%= @angleValue[i] %></textarea></td>
                               <td><textarea id = "angleValueDiff<%= String(i) %>"><%= @angleValueDiff[i] %></textarea></td>
                               <td><textarea id = "detailScore<%= String(i) %>"><%= @detailScore[i] %></textarea></td>

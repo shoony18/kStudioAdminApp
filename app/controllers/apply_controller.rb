@@ -79,6 +79,8 @@ before_action :authenticate_user!
         @detailScore = []
         @fbFlag = []
         @fbContent = []
+        @range_start = []
+        @range_end = []
 
         @anaCriteriaID = ["headPosition","leg","axis","arm","ground"]
         @anaCriteriaTitle = ["ヘッドポジション","レッグ","軸","腕振り","接地"]
@@ -102,6 +104,14 @@ before_action :authenticate_user!
         sql4_text = "select * from motionplotdb.KST0610T_userValueDiff where ANALYTICS_ID = '"+@applyID+"' and FRAME = 0;"
         sql4     =  sql4_text
         results4 = bigquery.query sql4
+
+        sql5_text = "select * from motionplotdb.KST0610T_analytics where variable = 'range_start';"
+        sql5     =  sql5_text
+        results5 = bigquery.query sql5
+
+        sql6_text = "select * from motionplotdb.KST0610T_analytics where variable = 'range_end';"
+        sql6     =  sql6_text
+        results6 = bigquery.query sql6
 
         results1.each do |row|
             puts "#{row[:url]}: #{row[:view_count]} views"
@@ -171,6 +181,40 @@ before_action :authenticate_user!
             @angleValueDiff.push(row[:ANGLE_L_COM].floor)
         end
 
+        results5.each do |row|
+            puts "#{row[:url]}: #{row[:view_count]} views"
+            @range_start.push(row[:ANGLE_NECK].floor)
+            @range_start.push(row[:ANGLE_R_SHOULDER].floor)
+            @range_start.push(row[:ANGLE_L_SHOULDER].floor)
+            @range_start.push(row[:ANGLE_R_ELBOW].floor)
+            @range_start.push(row[:ANGLE_L_ELBOW].floor)
+            @range_start.push(row[:ANGLE_R_HIP].floor)
+            @range_start.push(row[:ANGLE_L_HIP].floor)
+            @range_start.push(row[:ANGLE_R_KNEE].floor)
+            @range_start.push(row[:ANGLE_L_KNEE].floor)
+            @range_start.push(row[:ANGLE_R_ANKLE].floor)
+            @range_start.push(row[:ANGLE_L_ANKLE].floor)
+            @range_start.push(row[:ANGLE_R_COM].floor)
+            @range_start.push(row[:ANGLE_L_COM].floor)
+        end
+        
+        results6.each do |row|
+            puts "#{row[:url]}: #{row[:view_count]} views"
+            @range_end.push(row[:ANGLE_NECK].floor)
+            @range_end.push(row[:ANGLE_R_SHOULDER].floor)
+            @range_end.push(row[:ANGLE_L_SHOULDER].floor)
+            @range_end.push(row[:ANGLE_R_ELBOW].floor)
+            @range_end.push(row[:ANGLE_L_ELBOW].floor)
+            @range_end.push(row[:ANGLE_R_HIP].floor)
+            @range_end.push(row[:ANGLE_L_HIP].floor)
+            @range_end.push(row[:ANGLE_R_KNEE].floor)
+            @range_end.push(row[:ANGLE_L_KNEE].floor)
+            @range_end.push(row[:ANGLE_R_ANKLE].floor)
+            @range_end.push(row[:ANGLE_L_ANKLE].floor)
+            @range_end.push(row[:ANGLE_R_COM].floor)
+            @range_end.push(row[:ANGLE_L_COM].floor)
+        end        
+
         @criteriaScore[0] = @detailScore[0].floor
         @criteriaScore[1] = ((@detailScore[1] + @detailScore[2] + @detailScore[3] + @detailScore[4] + @detailScore[5] + @detailScore[6])/6).floor
         @criteriaScore[2] = @detailScore[7].floor
@@ -186,6 +230,8 @@ before_action :authenticate_user!
         @anaCriteriaID_j = @anaCriteriaID.to_json.html_safe
         @anaCriteriaTitle_j = @anaCriteriaTitle.to_json.html_safe
         @criteriaScore_j = @criteriaScore.to_json.html_safe
+        @range_start_j = @range_start.to_json.html_safe
+        @range_end_j = @range_end.to_json.html_safe
         
     end
 
