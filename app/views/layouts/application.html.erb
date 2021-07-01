@@ -264,25 +264,33 @@
               
               
               
-//              $('#applyShowCreateAnswer').on('click', function(){
-//                  const good = document.getElementById('applyShowAnswerTextArea1').value;
-//                  const bad = document.getElementById('applyShowAnswerTextArea2').value;
-//                  const practice = document.getElementById('applyShowAnswerTextArea3').value;
-//                  const URL = document.getElementById('applyShowAnswerTextArea4').value;
-//                  const comment = document.getElementById('applyShowAnswerTextArea5').value;
-//                  var ref1_1 = firebase.database().ref("answer").child(applyID)
-//                  var ref1_2 = firebase.database().ref("myApply").child(uid).child(applyID)
-//                  var ref1_3 = firebase.database().ref("myApply").child(uid).child(applyID).child("fcmTrigger")
-//                  var ref1_4 = firebase.database().ref("apply").child(applyID)
-//                  var data1_1 = { good: good, bad: bad, practice: practice, URL: URL, comment: comment };
-//                  var data1_2 = { answerFlag: "2" };
-//                  var data1_3 = { fcmTrigger: "1" };
-//                  ref1_1.update(data1_1);
-//                  ref1_2.update(data1_2);
-//                  ref1_3.update(data1_3);
-//                  ref1_4.update(data1_2);
-//                  window.location.href　= "/apply/show?applyID=" + applyID 
-//              })
+//              document.getElementById("select").onclick = function(e){
+//
+//                  var ImgName,ImgUrl;
+//                  var files;
+//                  var reader;
+//                  var input = document.createElement('input');
+//                  input.type = 'file';
+//                  input.onchange = e =>{
+//                      files = e.target.files;
+//                      reader = new FileReader();
+//                      reader.onload = function(){
+//                          document.getElementByID("myimg").src = reader.result;
+//                      }
+//                      reader.readAsDataURL(files);
+//                  }
+//                  input.click();
+//                  
+//              }
+//              document.getElementById("upload").onclick = function(){
+//////                  ImgName = document.getElementById("namebox").value;
+//                  var uploadTask = firebase.storage().ref("user/"+uid+"/myApply/all/"+applyID+"/"+applyID+".png").put(file)
+//                  uploadTask.on('state_changed',function(snapshot){
+////                      var progress = (snapshot.bytesTranferred)
+////                      document.getElementById("UpProgress").innerHTML
+//                  });
+//              }    
+
               $('#backToShow').on('click', function(){
                   window.location.href　= "/" 
               })
@@ -343,7 +351,95 @@
 
                   
               }
-                          
+//              function OnFileSelect( inputElement ){
+//                  var fileList = inputElement.files;
+//                  var fileCount = fileList.length;
+//                  var loadCompleteCount = 0;
+//                  var imageList = ""; 
+//                  
+//                  var fileReader = new FileReader();
+//                  var file = fileList[ 0 ];
+//
+//                  fileReader.onload = function() {
+//                      imageList = "<img src=' + this.result +'style='height:200px; width:200px;'>";
+//                      document.getElementById( "anaImg" ).innerHTML = imageList;
+////                      document.getElementByID("myimg").src = fileReader.result; 
+//                  };
+// 
+//                  fileReader.readAsDataURL( file );
+//              }
+
+              var files = [];
+              document.getElementById("files1").addEventListener("change", function(e) {
+                  files = e.target.files;
+                  for (let i = 0; i < files.length; i++) {
+                      var fileReader = new FileReader() ;
+                      fileReader.onload = function () {
+                          document.getElementById('myimg'+String(i+1)).src = this.result ;
+                      }
+                      var file = document.getElementById('files'+String(i+1)).files[i] ;
+                      fileReader.readAsDataURL( file ) ;                      
+                  }
+              });
+              var files2 = [];
+              document.getElementById("files2").addEventListener("change", function(e) {
+                  files2 = e.target.files;
+                  for (let i = 0; i < files2.length; i++) {
+                      var fileReader = new FileReader() ;
+                      fileReader.onload = function () {
+                          document.getElementById('myimg'+String(i+2)).src = this.result ;
+                      }
+                      var file = document.getElementById('files'+String(i+2)).files[i] ;
+                      fileReader.readAsDataURL( file ) ;                      
+                  }
+              });
+//              document.getElementById("files2").addEventListener("change", function(e) {
+//                  files2 = e.target.files2;
+//                  var fileReader2 = new FileReader() ;
+//                  fileReader2.onload = function () {
+//                      document.getElementById('myimg2').src = this.result ;
+//                  }
+//                  var file2 = document.getElementById("files2").files2[0] ;
+//                  fileReader2.readAsDataURL( file2 ) ;
+//              });
+
+              document.getElementById("applyShowCreateAnswer_bq").addEventListener("click", 
+              
+              function () {
+                  //checks if files are selected
+                  if (files.length != 0) {
+
+                      for (let i = 0; i < files.length; i++) {
+                          var storage = firebase.storage().ref("user/"+uid+"/myApply/all/"+applyID+"/anaImage_1_"+applyID+".png");
+                          var upload = storage.put(files[i]);
+                          upload.on("state_changed",function progress(snapshot) {
+                              var percentage = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                              document.getElementById("progress").value = percentage;
+                             }
+                                   
+                          );
+                      }
+                      for (let i = 0; i < files2.length; i++) {
+                          var storage = firebase.storage().ref("user/"+uid+"/myApply/all/"+applyID+"/anaImage_2_"+applyID+".png");
+                          var upload = storage.put(files2[i]);
+                          upload.on("state_changed",function progress(snapshot) {
+                              var percentage = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                              document.getElementById("progress").value = percentage;
+                             }
+                             
+                           );
+
+                      }   
+
+//                      alert();
+
+                  } else {
+                      alert("No file chosen");
+                  }
+
+//                  alert();
+              })
+              
               <% end %>
 
           });
@@ -418,9 +514,10 @@
       <script>
          
           function alert(){
-              if(window.confirm('この内容で回答を送信します。よろしいですか？')){
-                  
 
+
+              if(window.confirm('この内容で回答を送信します。よろしいですか？')){           
+                  
                   var anaPointIDArray = JSON.parse('<%= @anaPointID_j %>');
                   var angleValueArray = JSON.parse('<%= @angleValue_j %>');
                   var angleValueDiffArray = JSON.parse('<%= @angleValueDiff_j %>');
@@ -520,10 +617,10 @@
                       ref1_4.update(data1_4);
                           
                      }
-                      window.location.href　= "/apply/show?applyID=" + applyID 
 
                   })
-
+                  
+                      window.location.href　= "/apply/show?applyID=" + applyID 
                   
               }else{
               }

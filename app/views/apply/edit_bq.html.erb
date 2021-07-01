@@ -105,11 +105,25 @@
                     </table>
 
                   </div>
-                    <form id="applyShowAnswer">
-                        <button id = "analyticsButton" class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample" onclick="alert3(); return false;">
-                            BigQueryから分析結果を取得する
-                        </button><br>
-                      </form>
+<!--
+                  <div id = "anaImg" class="btn btn-secondary disabled" style ="padding-bottom: 10px;">解析画像</div><br><br>
+                    <div id = "myimg1_div" style="height:200px; width:200px; background:gray;">
+                        <img id = "myimg1" style="height:200px; width:200px; background:gray;">
+                    </div>
+                    <div id = "myimg2_div" style="height:200px; width:200px; background:gray;">
+                        <img id = "myimg2" style="height:200px; width:200px; background:gray;"> 
+                    </div>
+                    画像1<input type="file" id="files" multiple /><br>
+                    画像2<input type="file" id="files2" multiple /><br>
+-->
+
+                    <div id = "anaImg" class="btn btn-secondary disabled" style ="padding-bottom: 10px;">解析画像</div><br><br>
+                    <img id = "myimg1" style="height:200px; width:200px; background:gray;"><br>
+                    <img id = "myimg2" style="height:200px; width:200px; background:gray;"><br>
+                    画像1<input type="file" id="files1" multiple /><br>
+                    画像2<input type="file" id="files2" multiple /><br>
+<!--                    <button id ="select">画像を選択</button>-->
+<!--                    <button id ="send">画像をアップロード</button>-->
                 </div>
               </div>
                 
@@ -117,7 +131,10 @@
                 <button id = "backToShow" class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
                     戻る
                 </button>
-                <button id = "applyShowCreateAnswer" class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample" onclick="alert(); return false;">
+                <button id = "applyShowCreateAnswer_bq" class="btn btn-secondary"  data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample" >
+                    画像アップロード
+                </button>
+                <button id = "applyShowCreateAnswer" class="btn btn-secondary"  data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample" onclick="alert(); return false;">
                     回答送信
                 </button>
               <br>
