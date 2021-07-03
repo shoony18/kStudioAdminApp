@@ -321,36 +321,39 @@
                   var range_start_Array = JSON.parse('<%= @range_start_j %>');
                   var range_end_Array = JSON.parse('<%= @range_end_j %>');
 
-
-              for (let i = 0; i < anaPointIDArray.length; i++) {
-                                                      
-                  var anaPointID = anaPointIDArray[i];
-                  var fbFlag = fbFlagArray[i];
-                                                                     
-                  var ref1 = firebase.database().ref("analytics").child("feedback").child(anaPointID)       
-                  ref1.on('value', function(snapshot) {
-                  
-                   if (fbFlag == "0") {
-                       var feedback = snapshot.val().fb0
-                   } else if (fbFlag == "1"){
-                       var feedback = snapshot.val().fb1
-                   } else if (fbFlag == "2"){
-                       var feedback = snapshot.val().fb2
-                   }else{
-                       var feedback = ""                       
-                   }
-
-                  fbFlagContentArray.push(feedback)
-                                            
-                  var fbContentID = 'fbContent0_' + String(i);
-                  var insertHTML2_6 = "<td><textarea id = "+fbContentID+">"+feedback+"</textarea></td>";
-                  var applyTr_fb = document.getElementById('applyTr'+String(i));
-                  applyTr_fb.insertAdjacentHTML('beforeend', insertHTML2_6);
-
-                  })
-
-                  
-              }
+//
+//              for (let i = 0; i < anaPointIDArray.length; i++) {
+//                                                      
+//                  var anaPointID = anaPointIDArray[i];
+//                  var fbFlag = fbFlagArray[i];
+//                                                                     
+//                  var ref1 = firebase.database().ref("analytics").child("feedback").child(anaPointID)       
+//                  ref1.on('value', function(snapshot) {
+//                  
+//                   if (fbFlag == "0") {
+//                       var feedback = snapshot.val().fb0
+//                   } else if (fbFlag == "1"){
+//                       var feedback = snapshot.val().fb1
+//                   } else if (fbFlag == "2"){
+//                       var feedback = snapshot.val().fb2
+//                   }else{
+//                       var feedback = ""                       
+//                   }
+//
+//                  fbFlagContentArray.push(feedback)
+//                                            
+//                  var fbContentID = 'fbContent0_' + String(i);
+//                  var insertHTML2_6 = "<td><textarea id = "+fbContentID+">"+fbFlag+"_"+feedback+"</textarea></td>";
+//                  var applyTr_fb = document.getElementById('applyTr'+String(i));
+//                  applyTr_fb.insertAdjacentHTML('beforeend', insertHTML2_6);
+//
+//                  })
+//
+//                  
+//              }
+            
+              
+              
 //              function OnFileSelect( inputElement ){
 //                  var fileList = inputElement.files;
 //                  var fileCount = fileList.length;
@@ -526,7 +529,7 @@
                   var anaCriteriaIDArray = JSON.parse('<%= @anaCriteriaID_j %>');
                   var anaCriteriaTitleArray = JSON.parse('<%= @anaCriteriaTitle_j %>');
                   var criteriaScoreArray = JSON.parse('<%= @criteriaScore_j %>');
-                  var fbFlagContentArray = [];
+                  var fbContentArray = JSON.parse('<%= @fbContent_j %>');
                   var range_start_Array = JSON.parse('<%= @range_start_j %>');
                   var range_end_Array = JSON.parse('<%= @range_end_j %>');
                      
@@ -606,10 +609,11 @@
                       var angleValueDiff = angleValueDiffArray[i];
                       var detailScore = detailScoreArray[i];
                       var fbFlag = fbFlagArray[i];
+                      var fbContent = fbContentArray[i];
                       var range_start = range_start_Array[i];
                       var range_end = range_end_Array[i];
                       
-                      var fbContent = document.getElementById('fbContent0_'+String(i)).value;
+//                      var fbContent = document.getElementById('fbContent0_'+String(i)).value;
                          
                       var ref1_4 = firebase.database().ref("apply").child("all").child(applyID).child("answer").child("analytics").child("point").child(anaPointID)
                       

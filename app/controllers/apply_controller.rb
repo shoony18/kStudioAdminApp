@@ -51,7 +51,7 @@ before_action :authenticate_user!
         @currentView2 = "fbNew"
 #        @firebaseInfo = FirebaseInfo.find_by(id:1)
         @applyID = ""
-        @anaPointID = ["ANGLE_NECK","ANGLE_R_HIP","ANGLE_L_HIP","ANGLE_R_KNEE","ANGLE_L_KNEE","ANGLE_R_ANKLE","ANGLE_L_ANKLE","ANGLE_AXIS","ANGLE_L_ELBOW","ANGLE_R_ELBOW","ANGLE_L_HAND","ANGLE_R_HAND"]
+        @anaPointID = ["ANGLE_NECK","ANGLE_R_SHOULDER","ANGLE_L_SHOULDER","ANGLE_R_ELBOW","ANGLE_L_ELBOW","ANGLE_R_HIP","ANGLE_L_HIP","ANGLE_R_KNEE","ANGLE_L_KNEE","ANGLE_R_ANKLE","ANGLE_L_ANKLE","ANGLE_R_COM","ANGLE_L_COM"]
         
     
     end    
@@ -112,6 +112,10 @@ before_action :authenticate_user!
         sql6_text = "select * from motionplotdb.KST0610T_analytics where variable = 'range_end';"
         sql6     =  sql6_text
         results6 = bigquery.query sql6
+
+        sql7_text = "select * from motionplotdb.KST0610T_userScoreFBContent where variable = '"+@applyID+"'"
+        sql7     =  sql7_text
+        results7 = bigquery.query sql7
 
         results1.each do |row|
             puts "#{row[:url]}: #{row[:view_count]} views"
@@ -215,6 +219,22 @@ before_action :authenticate_user!
             @range_end.push(row[:ANGLE_L_COM].floor)
         end        
 
+        results7.each do |row|
+            puts "#{row[:url]}: #{row[:view_count]} views"
+            @fbContent.push(row[:ANGLE_NECK])
+            @fbContent.push(row[:ANGLE_R_SHOULDER])
+            @fbContent.push(row[:ANGLE_L_SHOULDER])
+            @fbContent.push(row[:ANGLE_R_ELBOW])
+            @fbContent.push(row[:ANGLE_L_ELBOW])
+            @fbContent.push(row[:ANGLE_R_HIP])
+            @fbContent.push(row[:ANGLE_L_HIP])
+            @fbContent.push(row[:ANGLE_R_KNEE])
+            @fbContent.push(row[:ANGLE_L_KNEE])
+            @fbContent.push(row[:ANGLE_R_ANKLE])
+            @fbContent.push(row[:ANGLE_L_ANKLE])
+            @fbContent.push(row[:ANGLE_R_COM])
+            @fbContent.push(row[:ANGLE_L_COM])
+        end        
         @criteriaScore[0] = @detailScore[0].floor
         @criteriaScore[1] = ((@detailScore[1] + @detailScore[2] + @detailScore[3] + @detailScore[4] + @detailScore[5] + @detailScore[6])/6).floor
         @criteriaScore[2] = @detailScore[7].floor
@@ -227,6 +247,7 @@ before_action :authenticate_user!
         @angleValueDiff_j = @angleValueDiff.to_json.html_safe
         @detailScore_j = @detailScore.to_json.html_safe
         @fbFlag_j = @fbFlag.to_json.html_safe
+        @fbContent_j = @fbContent.to_json.html_safe
         @anaCriteriaID_j = @anaCriteriaID.to_json.html_safe
         @anaCriteriaTitle_j = @anaCriteriaTitle.to_json.html_safe
         @criteriaScore_j = @criteriaScore.to_json.html_safe
